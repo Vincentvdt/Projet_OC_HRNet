@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import App from "./App.tsx";
 import "./index.css";
+import Home from "./pages/Home.tsx";
 
 const router = createBrowserRouter([
     {
@@ -13,8 +14,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <div>Home
-                    <NavLink to="/employee">Employé</NavLink></div>,
+                element: <Home/>,
             },
             {
                 path: "employee",
