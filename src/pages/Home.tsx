@@ -1,13 +1,15 @@
 import styled from '@emotion/styled';
 import WealthLogo from '../assets/logo.png';
-import { LinkButton } from '../components/common/Button.tsx'; // Assuming you have a logo component or image
+import { LinkButton } from '../components/common/Button.tsx';
 
 const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - 50px);
+  height: 100%;
+  margin: 30px 0;
+  min-height: calc(100vh - 50px - 60px);
 `;
 
 const Title = styled.h1`

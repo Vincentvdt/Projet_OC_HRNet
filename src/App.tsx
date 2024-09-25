@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import Header from './components/Header.tsx';
 import { blue } from '@radix-ui/colors';
 import { ThemeProvider } from '@emotion/react';
+import { Suspense } from 'react';
 
 const Container = styled.main`
   display: flex;
@@ -25,7 +26,9 @@ function App() {
     <ThemeProvider theme={theme}>
       <Header />
       <Container>
-        <Outlet />
+        <Suspense fallback={<p />}>
+          <Outlet />
+        </Suspense>
       </Container>
     </ThemeProvider>
   );

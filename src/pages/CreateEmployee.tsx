@@ -27,18 +27,17 @@ import {
 } from '../components/styled/AlertDialog.tsx';
 import { createEmployeeSchema } from '../schemas/employeeSchema';
 
-const FormContainer = styled.div`
-  padding: 30px;
+const FormContainer = styled.div<{ loading: boolean }>`
+  padding: ${({ loading }) => (loading ? '0 30px' : '30px')};
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
 
   width: 100%;
   max-width: 600px;
   background-color: #f7f9fb;
   border-radius: 8px;
   margin-top: 25px;
-  min-height: calc(100dvh - 50px - 100px);
 
   h2 {
     margin: 0;
@@ -63,6 +62,11 @@ const departmentOptions = departments.map((department) => ({
   value: department.toLowerCase().replace(/\s+/g, '-'),
 }));
 
+/**
+ * Component for creating a new employee.
+ *
+ * @returns JSX Element for employee creation form.
+ */
 const CreateEmployee = () => {
   const navigate = useNavigate();
   const addEmployees = useEmployeeStore((state) => state.addEmployee);
@@ -72,6 +76,7 @@ const CreateEmployee = () => {
   const [open, setOpen] = useState(false);
   const [employeeInfo, setEmployeeInfo] = useState<Employee | null>(null);
 
+  // Initializing form management using react-hook-form with validation schema
   const {
     register,
     handleSubmit,
@@ -80,11 +85,20 @@ const CreateEmployee = () => {
     getValues,
   } = useForm<Employee>({ resolver: yupResolver(createEmployeeSchema) });
 
+  /**
+   * Handles form submission and sets employee data for confirmation.
+   *
+   * @param data - Employee form data.
+   */
   const handleFormSubmit: SubmitHandler<Employee> = (data) => {
     setEmployeeInfo(data);
     setOpen(true); // Open the modal for confirmation
   };
 
+  /**
+   * Handles confirmation of the employee creation process.
+   * Simulates an API call, adds the employee to the store, and navigates to employee listing.
+   */
   const handleConfirmation = () => {
     setLoading(true);
     // Simulate the API call
@@ -100,72 +114,77 @@ const CreateEmployee = () => {
   };
 
   return (
-    <FormContainer>
-      <h2>Add New Employee</h2>
+    <FormContainer loading={loading || success}>
       {loading ? (
         <Loader>Submitting... Please wait.</Loader>
       ) : success ? (
         <SuccessMessage>Employee created successfully!</SuccessMessage>
       ) : (
-        <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <Label htmlFor="firstName">First Name</Label>
-          <InputField error={!!errors.firstName} type="text" {...register('firstName')} />
-          <small>{errors.firstName?.message}</small>
+        <>
+          <h2>Add New Employee</h2>
+          <form onSubmit={handleSubmit(handleFormSubmit)}>
+            <Label htmlFor="firstName">First Name</Label>
+            <InputField error={!!errors.firstName} type="text" {...register('firstName')} />
+            <small>{errors.firstName?.message}</small>
 
-          <Label htmlFor="lastName">Last Name</Label>
-          <InputField error={!!errors.lastName} type="text" {...register('lastName')} />
-          <small>{errors.lastName?.message}</small>
+            <Label htmlFor="lastName">Last Name</Label>
+            <InputField error={!!errors.lastName} type="text" {...register('lastName')} />
+            <small>{errors.lastName?.message}</small>
 
-          <Label htmlFor="dateOfBirth">Date of Birth</Label>
-          <DateTimepicker
-            name="dateOfBirth"
-            selected={getValues('dateOfBirth')}
-            onDateChange={(date) => setValue('dateOfBirth', date)}
-            customInput={<InputField error={!!errors.dateOfBirth} />}
-          />
-          <small>{errors.dateOfBirth?.message}</small>
+            <Label htmlFor="dateOfBirth">Date of Birth</Label>
+            <DateTimepicker
+              name="dateOfBirth"
+              selected={getValues('dateOfBirth')}
+              onDateChange={(date) => setValue('dateOfBirth', date)}
+              customInput={<InputField error={!!errors.dateOfBirth} />}
+              calendarWidth={300}
+            />
+            <small>{errors.dateOfBirth?.message}</small>
 
-          <Label htmlFor="startDate">Start Date</Label>
-          <DateTimepicker
-            name="startDate"
-            selected={getValues('startDate')}
-            onDateChange={(date) => setValue('startDate', date)}
-            customInput={<InputField error={!!errors.startDate} />}
-          />
-          <small>{errors.startDate?.message}</small>
+            <Label htmlFor="startDate">Start Date</Label>
+            <DateTimepicker
+              name="startDate"
+              selected={getValues('startDate')}
+              onDateChange={(date) => setValue('startDate', date)}
+              customInput={<InputField error={!!errors.startDate} />}
+              calendarWidth={300}
+            />
+            <small>{errors.startDate?.message}</small>
 
-          <Label htmlFor="street">Street</Label>
-          <InputField error={!!errors.street} type="text" {...register('street')} />
-          <small>{errors.street?.message}</small>
+            <Label htmlFor="street">Street</Label>
+            <InputField error={!!errors.street} type="text" {...register('street')} />
+            <small>{errors.street?.message}</small>
 
-          <Label htmlFor="city">City</Label>
-          <InputField error={!!errors.city} type="text" {...register('city')} />
-          <small>{errors.city?.message}</small>
+            <Label htmlFor="city">City</Label>
+            <InputField error={!!errors.city} type="text" {...register('city')} />
+            <small>{errors.city?.message}</small>
 
-          <Label htmlFor="state">State</Label>
-          <Select
-            onChange={(state) => setValue('state', state!.label)}
-            options={stateOptions}
-            isClearable
-          />
-          <small>{errors.state?.message}</small>
+            <Label htmlFor="state">State</Label>
+            <Select
+              onChange={(state) => setValue('state', state!.label)}
+              options={stateOptions}
+              isClearable
+            />
+            <small>{errors.state?.message}</small>
 
-          <Label htmlFor="zipCode">Zipcode</Label>
-          <InputField error={!!errors.zipCode} type="text" {...register('zipCode')} />
-          <small>{errors.zipCode?.message}</small>
+            <Label htmlFor="zipCode">Zipcode</Label>
+            <InputField error={!!errors.zipCode} type="text" {...register('zipCode')} />
+            <small>{errors.zipCode?.message}</small>
 
-          <Label htmlFor="department">Department</Label>
-          <Select
-            onChange={(department) => setValue('department', department!.label)}
-            options={departmentOptions}
-            isClearable
-          />
-          <small>{errors.department?.message}</small>
+            <Label htmlFor="department">Department</Label>
+            <Select
+              onChange={(department) => setValue('department', department!.label)}
+              options={departmentOptions}
+              isClearable
+            />
+            <small>{errors.department?.message}</small>
 
-          <Button type="submit">Submit</Button>
-        </form>
+            <Button type="submit">Submit</Button>
+          </form>
+        </>
       )}
 
+      {/* Confirmation dialog for employee creation */}
       <AlertDialog.Root open={open} onOpenChange={setOpen}>
         <AlertDialog.Portal>
           <AlertDialogOverlay />
